@@ -1,0 +1,16 @@
+.nav {
+    font-size: larger;
+}
+
+.fiveDay {
+    background-color: blue;
+margin: 10px;
+padding: 20px;
+color: white;
+}
+
+.dashboard {
+    font-size: x-large;
+    align-content: center;
+    text-align: center;
+}
