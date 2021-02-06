@@ -3,7 +3,8 @@
 }
 
 .fiveDay {
-    background-color: blue;
+    background-color: lightblue;
+    color: black;
 margin: 1%;
 padding: 1%;
 color: white;
@@ -13,4 +14,8 @@ color: white;
     font-size: x-large;
     align-content: center;
     text-align: center;
+}
+
+#uvCurrent {
+    background-color: white;
 }
