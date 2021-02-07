@@ -169,27 +169,32 @@ function displayUV(currentUV) {
 
 //event listener for new city entry
 var searchEnter = document.getElementById("searchEnter");
+var cityHistory = document.getElementById("list");
 
 searchEnter.addEventListener("click", function (event) {
     event.preventDefault();
-    cityName = document.getElementById("searchInput").value;
-    console.log(cityName);
-    console.log("cityarray before push " + cityArray);
-    cityArray.push(cityName);
-    console.log("cityarray after push " + cityArray);
-    localStorage.setItem('cities', JSON.stringify(cityArray));
+    if (document.getElementById("searchInput").value) {
+        cityName = document.getElementById("searchInput").value;
+        document.getElementById("searchInput").value = "";
+        console.log(cityName);
+        console.log("cityarray before push " + cityArray);
+        cityArray.push(cityName);
+        console.log("cityarray after push " + cityArray);
+        localStorage.setItem('cities', JSON.stringify(cityArray));
+    }
+    else {
+        window.alert("Enter a city to see their weather");
+    }
 
     citySearch();
     displayNewCity();
-
-
 });
 
 function citySearch() {
-    var ul = document.getElementById("list");
-    var previousCity = document.createElement("li");
-    previousCity.insertBefore(document.createTextNode(cityName), previousCity.firstChild);
-    // ul.insertBefore(previousCity);
+    var citySearchValue = document.createElement("li");
+    citySearchValue.textContent = cityName.toUpperCase();
+    citySearchValue.classList.add("searchResults");
+    cityHistory.prepend(citySearchValue);
 }
 
 function displayNewCity() {
@@ -199,6 +204,7 @@ function displayNewCity() {
         console.log(pastCity);
         pastCityLength = pastCity.length - 1;
         cityName = pastCity[pastCityLength];
+
     }
 
     displayWeather();
@@ -206,6 +212,17 @@ function displayNewCity() {
 
 
 //event listener(s) for previous city searches
+// if (document.querySelectorAll("searchResults")) {
+//     var searchResults = document.getElementsByClassName("searchResults");
+
+//     searchResults.addEventListener("click", function (event) {
+//         event.preventDefault();
+//         console.log("Result clicked");
+//     });
+// }
+
+
+
 
 
 displayWeather();
