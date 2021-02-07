@@ -11,13 +11,20 @@ var currentIconEl = document.getElementById("currentIcon");
 //Location weather variables
 var DateTime = luxon.DateTime;
 var now = DateTime.local();
+// var today = DateTime.toISODate();
 var cityName = "denver";
 var todaysWeather = "";
 var weeksForecast = "";
 var uvIndex = 0;
+var day1 = now.plus({ days: 1 });
+var day2 = now.plus({ days: 2 });
+var day3 = now.plus({ days: 3 });
+var day4 = now.plus({ days: 4 });
+var day5 = now.plus({ days: 5 });
 
-
-console.log(now.toLocaleString(DateTime.DATETIME_MED))
+console.log(day1.toLocaleString(DateTime.DATETIME_MED));
+// console.log(DateTime.fromISO('2017-05-15').plus({ months: 2, days: 6 }).toISODate());
+console.log(now.toLocaleString(DateTime.DATETIME_MED));
 
 
 
@@ -53,29 +60,9 @@ function displayWeather() {
             }
             return;
         });
-
-    function uvDisplay(currentUVData) {
-        var lat = currentUVData.coord.lat;
-        var long = currentUVData.coord.lon;
-
-        fetch('https://api.openweathermap.org/data/2.5/onecall?lat=' + lat + '&lon=' + long + '&cnt=5&units=imperial&APPID=59e0682cd6b4256b2f3d0ccfb3eb5edf')
-            .then(response => response.json())
-            .then(data => {
-                console.log("onecall api");
-
-                //Displays on the html page
-                // document.getElementById("tempCurrent").textContent = "Temperature: " + data.main.temp;
-                if (data) {
-                    console.log(data)
-                    var currentUV = data.current.uvi;
-                    console.log("uvi " + currentUV);
-                    document.getElementById("uvCurrent").textContent = " " + currentUV + " ";
-                    displayUV(data.current.uvi);
-
-                }
-            });
-    }
 }
+
+
 
 function updateDisplay(currentWeatherData) {
     document.getElementById("currentDate").textContent = now.toLocaleString(DateTime.DATE_SHORT);
@@ -95,7 +82,7 @@ function forecastDisplay(forecastData) {
     var icon1 = JSON.stringify(forecastData.list[0].weather[0].icon);
     icon1 = icon1.slice(1, -1);
     icon1El.src = "http://openweathermap.org/img/wn/" + icon1 + "@2x.png";
-    document.getElementById("date1").textContent = now.toLocaleString(DateTime.DATE_SHORT);
+    document.getElementById("date1").textContent = day1.toLocaleString(DateTime.DATE_SHORT);
     document.getElementById("temp1").textContent = "Temp: " + forecastData.list[0].main.temp + " °F";
     document.getElementById("humidity1").textContent = "Humidity: " + forecastData.list[0].main.humidity + "%";
 
@@ -103,6 +90,7 @@ function forecastDisplay(forecastData) {
     var icon2 = JSON.stringify(forecastData.list[1].weather[0].icon);
     icon2 = icon2.slice(1, -1);
     icon2El.src = "http://openweathermap.org/img/wn/" + icon2 + "@2x.png";
+    document.getElementById("date2").textContent = day2.toLocaleString(DateTime.DATE_SHORT);
     document.getElementById("temp2").textContent = "Temp: " + forecastData.list[1].main.temp + " °F";
     document.getElementById("humidity2").textContent = "Humidity: " + forecastData.list[1].main.humidity + "%";
 
@@ -110,6 +98,7 @@ function forecastDisplay(forecastData) {
     var icon3 = JSON.stringify(forecastData.list[2].weather[0].icon);
     icon3 = icon3.slice(1, -1);
     icon3El.src = "http://openweathermap.org/img/wn/" + icon3 + "@2x.png";
+    document.getElementById("date3").textContent = day3.toLocaleString(DateTime.DATE_SHORT);
     document.getElementById("temp3").textContent = "Temp: " + forecastData.list[2].main.temp + " °F";
     document.getElementById("humidity3").textContent = "Humidity: " + forecastData.list[2].main.humidity + "%";
 
@@ -117,6 +106,7 @@ function forecastDisplay(forecastData) {
     var icon4 = JSON.stringify(forecastData.list[3].weather[0].icon);
     icon4 = icon4.slice(1, -1);
     icon4El.src = "http://openweathermap.org/img/wn/" + icon4 + "@2x.png";
+    document.getElementById("date4").textContent = day4.toLocaleString(DateTime.DATE_SHORT);
     document.getElementById("temp4").textContent = "Temp: " + forecastData.list[3].main.temp + " °F";
     document.getElementById("humidity4").textContent = "Humidity: " + forecastData.list[3].main.humidity + "%";
 
@@ -124,11 +114,30 @@ function forecastDisplay(forecastData) {
     var icon5 = JSON.stringify(forecastData.list[4].weather[0].icon);
     icon5 = icon5.slice(1, -1);
     icon5El.src = "http://openweathermap.org/img/wn/" + icon5 + "@2x.png";
+    document.getElementById("date5").textContent = day5.toLocaleString(DateTime.DATE_SHORT);
     document.getElementById("temp5").textContent = "Temp: " + forecastData.list[4].main.temp + " °F";
     document.getElementById("humidity5").textContent = "Humidity: " + forecastData.list[4].main.humidity + "%";
+}
 
 
+function uvDisplay(currentUVData) {
+    var lat = currentUVData.coord.lat;
+    var long = currentUVData.coord.lon;
 
+    fetch('https://api.openweathermap.org/data/2.5/onecall?lat=' + lat + '&lon=' + long + '&cnt=5&units=imperial&APPID=59e0682cd6b4256b2f3d0ccfb3eb5edf')
+        .then(response => response.json())
+        .then(data => {
+            console.log("onecall api");
+            console.log(data);
+
+            //Displays on the html page
+            // document.getElementById("tempCurrent").textContent = "Temperature: " + data.main.temp;
+            if (data) {
+                displayUV(data.current.uvi);
+                document.getElementById("uvCurrent").textContent = data.current.uvi;
+                console.log(data.current.uvi);
+            }
+        });
 }
 
 function displayUV(currentUV) {
@@ -154,7 +163,16 @@ function displayUV(currentUV) {
 
 
 //event listener for new city entry
+var searchEnter = document.getElementById("searchEnter");
 
+searchEnter.addEventListener("click", function (event) {
+    event.preventDefault();
+    cityName = document.getElementById("searchInput").value;
+    console.log(cityName);
+    localStorage.setItem('eight', JSON.stringify(cityName));
+
+    displayWeather();
+});
 
 //event listener(s) for previous city searches
 
