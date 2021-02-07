@@ -23,3 +23,11 @@ color: white;
 #list{
     padding-left: 10px;
 }
+
+.card-header {
+    background-color: lightblue;
+}
+
+.blue {
+    background-color: lightblue;
+}

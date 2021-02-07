@@ -8,6 +8,7 @@ var icon4El = document.getElementById("icon4");
 var icon5El = document.getElementById("icon5");
 var currentIconEl = document.getElementById("currentIcon");
 
+
 //Location weather variables
 var cityName = "denver";
 var cityArray = [];
@@ -22,29 +23,18 @@ var day3 = now.plus({ days: 3 });
 var day4 = now.plus({ days: 4 });
 var day5 = now.plus({ days: 5 });
 
-console.log(day1.toLocaleString(DateTime.DATETIME_MED));
-console.log(now.toLocaleString(DateTime.DATETIME_MED));
+//Other Variables
+var searchEnter = document.getElementById("searchEnter");
+var cityHistory = document.getElementById("list");
+var input = document.getElementById("searchInput");
 
 
 //Display weather for selected city
 function displayWeather() {
 
-    var pastCity = JSON.parse(localStorage.getItem("cities"));
-
-    if (pastCity !== null) {
-        console.log(pastCity);
-        pastCityLength = pastCity.length - 1;
-        cityName = pastCity[pastCityLength];
-    }
-
-
     fetch('https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&units=imperial&APPID=59e0682cd6b4256b2f3d0ccfb3eb5edf')
         .then(response => response.json())
         .then(data => {
-            console.log(data);
-            console.log(data.main.temp);
-            console.log(data.main.feels_like);
-
             if (data) {
                 uvDisplay(data);
                 updateDisplay(data);
@@ -57,9 +47,6 @@ function displayWeather() {
     fetch('https://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&cnt=5&units=imperial&APPID=59e0682cd6b4256b2f3d0ccfb3eb5edf')
         .then(response => response.json())
         .then(data => {
-            // console.log(data.list.length);
-            console.log(data);
-
             if (data) {
                 forecastDisplay(data);
             }
@@ -132,15 +119,10 @@ function uvDisplay(currentUVData) {
     fetch('https://api.openweathermap.org/data/2.5/onecall?lat=' + lat + '&lon=' + long + '&cnt=5&units=imperial&APPID=59e0682cd6b4256b2f3d0ccfb3eb5edf')
         .then(response => response.json())
         .then(data => {
-            console.log("onecall api");
-            console.log(data);
-
             //Displays on the html page
-            // document.getElementById("tempCurrent").textContent = "Temperature: " + data.main.temp;
             if (data) {
                 displayUV(data.current.uvi);
                 document.getElementById("uvCurrent").textContent = data.current.uvi;
-                console.log(data.current.uvi);
             }
         });
 }
@@ -168,18 +150,12 @@ function displayUV(currentUV) {
 
 
 //event listener for new city entry
-var searchEnter = document.getElementById("searchEnter");
-var cityHistory = document.getElementById("list");
-
 searchEnter.addEventListener("click", function (event) {
     event.preventDefault();
     if (document.getElementById("searchInput").value) {
         cityName = document.getElementById("searchInput").value;
         document.getElementById("searchInput").value = "";
-        console.log(cityName);
-        console.log("cityarray before push " + cityArray);
         cityArray.push(cityName);
-        console.log("cityarray after push " + cityArray);
         localStorage.setItem('cities', JSON.stringify(cityArray));
     }
     else {
@@ -190,10 +166,23 @@ searchEnter.addEventListener("click", function (event) {
     displayNewCity();
 });
 
+//Get new city on enter keystroke
+input.addEventListener("keyup", function (event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+        event.preventDefault();
+        // Trigger the button element with a click
+        document.getElementById("searchEnter").click();
+    }
+});
+
+
 function citySearch() {
     var citySearchValue = document.createElement("li");
     citySearchValue.textContent = cityName.toUpperCase();
     citySearchValue.classList.add("searchResults");
+    cityVariable = cityName.split(" ").join("");
+    citySearchValue.id = cityVariable;
     cityHistory.prepend(citySearchValue);
 }
 
@@ -201,7 +190,6 @@ function displayNewCity() {
     var pastCity = JSON.parse(localStorage.getItem("cities"));
 
     if (pastCity !== null) {
-        console.log(pastCity);
         pastCityLength = pastCity.length - 1;
         cityName = pastCity[pastCityLength];
 
@@ -212,17 +200,25 @@ function displayNewCity() {
 
 
 //event listener(s) for previous city searches
-// if (document.querySelectorAll("searchResults")) {
-//     var searchResults = document.getElementsByClassName("searchResults");
+const ul = document.getElementById('list');
 
-//     searchResults.addEventListener("click", function (event) {
-//         event.preventDefault();
-//         console.log("Result clicked");
-//     });
-// }
+function clickCity(evt) {
+    // e.target refers to the clicked <li> element
+    // This is different than e.currentTarget, which would refer to the parent <ul> in this context
+    cityName = evt.target.textContent;
+    displayWeather();
+}
+
+ul.addEventListener('click', clickCity, false);
 
 
+function getSavedCities() {
+    var pastCity = JSON.parse(localStorage.getItem("cities"));
 
-
-
+    if (pastCity !== null) {
+        pastCityLength = pastCity.length - 1;
+        cityName = pastCity[pastCityLength];
+    }
+}
+getSavedCities();
 displayWeather();
