@@ -4,7 +4,13 @@ Build a page that will allow users to search for a city and then display the cur
 DESCRIPTION
 The goal of this project was to create a webpage where a user can enter different cities and see the current weather as well as a five day forecast. 
 
-I utilize the cityName variable to customize the api request URL's 
+I utilize the cityName variable to customize the api request URL's and then chained the latitude and longitude from one of the initial api requests to pull the UV index value. Once the api data is loaded it is rendered on the page utilizing data from all three api requests. 
+
+If the user enters a valid city in the text input on the left side of the page, then the cityName variable is updated and new api requests are initiated and the new weather data is displayed as well as displaying the searched city under the input field on the left side of the page. The city is also saved into an array in localStorage.
+
+Once there are previous city results on the left side of the screen, the user is able to select a city name and it will update the weather data to show for that city.
+
+If the user refreshes the page, the page loads that last city searched and displays it's weather and forecast. Then when they search a new city it clears the array and saves the new searched cities.
 
 To view the random password generator visit gquak.github.io/06_weatherdashboard/
 
