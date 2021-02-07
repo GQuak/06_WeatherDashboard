@@ -9,13 +9,13 @@ var icon5El = document.getElementById("icon5");
 var currentIconEl = document.getElementById("currentIcon");
 
 //Location weather variables
+var cityName = "denver";
+var cityArray = [];
+var uvIndex = 0;
+
+//Date-Time variables
 var DateTime = luxon.DateTime;
 var now = DateTime.local();
-// var today = DateTime.toISODate();
-var cityName = "denver";
-var todaysWeather = "";
-var weeksForecast = "";
-var uvIndex = 0;
 var day1 = now.plus({ days: 1 });
 var day2 = now.plus({ days: 2 });
 var day3 = now.plus({ days: 3 });
@@ -23,12 +23,20 @@ var day4 = now.plus({ days: 4 });
 var day5 = now.plus({ days: 5 });
 
 console.log(day1.toLocaleString(DateTime.DATETIME_MED));
-// console.log(DateTime.fromISO('2017-05-15').plus({ months: 2, days: 6 }).toISODate());
 console.log(now.toLocaleString(DateTime.DATETIME_MED));
 
 
-
+//Display weather for selected city
 function displayWeather() {
+
+    var pastCity = JSON.parse(localStorage.getItem("cities"));
+
+    if (pastCity !== null) {
+        console.log(pastCity);
+        pastCityLength = pastCity.length - 1;
+        cityName = pastCity[pastCityLength];
+    }
+
 
     fetch('https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&units=imperial&APPID=59e0682cd6b4256b2f3d0ccfb3eb5edf')
         .then(response => response.json())
@@ -37,24 +45,21 @@ function displayWeather() {
             console.log(data.main.temp);
             console.log(data.main.feels_like);
 
-            //Displays on the html page
-            // document.getElementById("tempCurrent").textContent = "Temperature: " + data.main.temp;
             if (data) {
                 uvDisplay(data);
                 updateDisplay(data);
             }
             return;
-        });
+        })
+        .catch(error => window.alert("Please enter a valid city"));
 
 
     fetch('https://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&cnt=5&units=imperial&APPID=59e0682cd6b4256b2f3d0ccfb3eb5edf')
         .then(response => response.json())
         .then(data => {
-            console.log(data.list.length);
+            // console.log(data.list.length);
             console.log(data);
 
-            //Displays on the html page
-            // document.getElementById("tempCurrent").textContent = "Temperature: " + data.main.temp;
             if (data) {
                 forecastDisplay(data);
             }
@@ -169,10 +174,36 @@ searchEnter.addEventListener("click", function (event) {
     event.preventDefault();
     cityName = document.getElementById("searchInput").value;
     console.log(cityName);
-    localStorage.setItem('eight', JSON.stringify(cityName));
+    console.log("cityarray before push " + cityArray);
+    cityArray.push(cityName);
+    console.log("cityarray after push " + cityArray);
+    localStorage.setItem('cities', JSON.stringify(cityArray));
+
+    citySearch();
+    displayNewCity();
+
+
+});
+
+function citySearch() {
+    var ul = document.getElementById("list");
+    var previousCity = document.createElement("li");
+    previousCity.insertBefore(document.createTextNode(cityName), previousCity.firstChild);
+    // ul.insertBefore(previousCity);
+}
+
+function displayNewCity() {
+    var pastCity = JSON.parse(localStorage.getItem("cities"));
+
+    if (pastCity !== null) {
+        console.log(pastCity);
+        pastCityLength = pastCity.length - 1;
+        cityName = pastCity[pastCityLength];
+    }
 
     displayWeather();
-});
+}
+
 
 //event listener(s) for previous city searches
 
